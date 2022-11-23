@@ -4,6 +4,7 @@
 
 This is a module for developing patient level prediction modules.  The user needs to specify a list of model designs and a model is fit per design.
 
+For a detailed example of how to manually create a prediction model development network study json specificaiton using Strategus and modules see [the wiki](https://github.com/OHDSI/PatientLevelPredictionModule/wiki/Instructions) .  In the future we aim to create a UI that can create the network study json specification.
 
 # Technology
 
