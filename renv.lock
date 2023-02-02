@@ -645,7 +645,7 @@
 			"RemoteHost" : "api.github.com",
 			"RemoteRepo" : "PatientLevelPrediction",
 			"RemoteUsername" : "ohdsi",
-			"RemoteRef" : "04a5efdabac0a894badbbc45b676b4350d5ead00"
+			"RemoteRef" : "v6.0.11"
 		},
 		"CirceR" : {
 			"Package" : "CirceR",
