@@ -124,7 +124,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "OHDSI",
       "RemoteRepo": "PatientLevelPrediction",
-      "RemoteRef": "v6.0.1",
+      "RemoteRef": "v6.0.11",
       "RemoteSha": "04c9f9edcb3b74e3ebf21f651c5149d5db346cb8",
       "Requirements": []
     },
