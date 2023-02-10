@@ -58,6 +58,40 @@ createCohortDefinitionSetFromJobContext <- function(sharedResources, settings) {
   return(cohortDefinitionSet)
 }
 
+setCovariateSchemaTable <- function(
+    modelDesignList, 
+    cohortDatabaseSchema,
+    cohortTable
+    ){
+  
+  if(inherits(modelDesignList, 'modelDesign')){
+    modelDesignList <- list(modelDesignList)
+  }
+  
+  for(i in 1:length(modelDesignList)){
+    covariateSettings <- modelDesignList[[i]]$covariateSettings
+    
+    if(inherits(covariateSettings, 'covariateSettings')){
+      covariateSettings <- list(covariateSettings)
+    }
+    
+    for(j in 1:length(covariateSettings)){
+      
+      if('cohortDatabaseSchema' %in% names(covariateSettings[[j]])){
+        covariateSettings[[j]]$cohortDatabaseSchema <- cohortDatabaseSchema
+      }
+      if('cohortTable' %in% names(covariateSettings[[j]])){
+        covariateSettings[[j]]$cohortTable <- cohortTable
+      }
+      
+    }
+    
+    modelDesignList[[i]]$covariateSettings <- covariateSettings
+  }
+  
+  return(modelDesignList)
+}
+
 # Module methods -------------------------
 execute <- function(jobContext) {
   rlang::inform("Validating inputs")
@@ -97,7 +131,14 @@ execute <- function(jobContext) {
     sharedResources = jobContext$sharedResources,
     settings = jobContext$settings
     )
-             
+  
+  # set the covariate settings schema and tables 
+  jobContext$settings <- setCovariateSchemaTable(
+    modelDesignList = jobContext$settings, 
+    cohortDatabaseSchema = jobContext$moduleExecutionSettings$workDatabaseSchema,
+    cohortTable = jobContext$moduleExecutionSettings$cohortTableNames$cohortTable
+    )
+  
   # run the models
   PatientLevelPrediction::runMultiplePlp(
     databaseDetails = databaseDetails, 
