@@ -1,3 +1,9 @@
+PatientLevelPredictionModule 0.0.7
+=======================
+
+Removed results being zipped 
+
+
 PatientLevelPredictionModule 0.0.6
 =======================
 

@@ -163,15 +163,8 @@ execute <- function(jobContext) {
       targetDialect = 'sqlite', 
       tempEmulationSchema = NULL
     ), 
-    csvFolder = file.path(workFolder, 'results'),
+    csvFolder = file.path(resultsFolder),
     fileAppend = NULL
-  )
-  
-  # Zip the results
-  rlang::inform("Zipping csv files")
-  DatabaseConnector::createZipFile(
-    zipFile = file.path(resultsFolder, 'results.zip'),
-    files = file.path(workFolder, 'results')
   )
   
   
