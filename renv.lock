@@ -36,6 +36,36 @@
       "Repository": "CRAN",
       "Hash": "68122010f01c4dcfbe58ce7112f2433d"
     },
+    "CohortGenerator": {
+      "Package": "CohortGenerator",
+      "Version": "0.8.0",
+      "Source": "GitHub",
+      "Remotes": "ohdsi/CirceR, ohdsi/Eunomia, ohdsi/ROhdsiWebApi",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "CohortGenerator",
+      "RemoteUsername": "OHDSI",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "30fe75d61cc8414f6021786502410fe7f66a3ac2",
+      "Requirements": [
+        "DatabaseConnector",
+        "ParallelLogger",
+        "R",
+        "R6",
+        "RJSONIO",
+        "SqlRender",
+        "bit64",
+        "checkmate",
+        "digest",
+        "dplyr",
+        "jsonlite",
+        "lubridate",
+        "readr",
+        "rlang",
+        "stringi"
+      ],
+      "Hash": "77386c387906530c81c16ffd2ddd1845"
+    },
     "Cyclops": {
       "Package": "Cyclops",
       "Version": "3.2.1",
@@ -284,6 +314,16 @@
         "R"
       ],
       "Hash": "45f0398006e83a5b10b72a90663d8d8c"
+    },
+    "RJSONIO": {
+      "Package": "RJSONIO",
+      "Version": "1.3-1.8",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "methods"
+      ],
+      "Hash": "cd79d1874fb20217463451f8c310c526"
     },
     "RSQLite": {
       "Package": "RSQLite",
