@@ -18,7 +18,7 @@
 createPatientLevelPredictionModuleSpecifications <- function(modelDesignList) {
   specifications <- list(
     module = "PatientLevelPredictionModule",
-    version = "0.1.0",
+    version = "0.2.0-1",
     remoteRepo = "github.com",
     remoteUsername = "ohdsi",
     settings = modelDesignList
