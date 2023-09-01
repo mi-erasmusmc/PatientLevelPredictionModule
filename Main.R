@@ -204,11 +204,8 @@ createDataModelSchema <- function(jobContext) {
   tablePrefix <- moduleInfo$TablePrefix
   schema <- jobContext$moduleExecutionSettings$resultsDatabaseSchema
   
-  conn <- DatabaseConnector::connect(connectionDetails)
-  on.exit(DatabaseConnector::disconnect(conn))
-  
   PatientLevelPrediction::createPlpResultTables(
-    conn = conn, 
+    connectionDetails = connectionDetails, 
     targetDialect = connectionDetails$dbms, 
     resultSchema = schema, 
     deleteTables = F,
