@@ -169,3 +169,47 @@ execute <- function(jobContext) {
   
   
 }
+
+
+uploadResultsCallback <- function(jobContext) {
+  connectionDetails <- jobContext$moduleExecutionSettings$resultsConnectionDetails
+  moduleInfo <- ParallelLogger::loadSettingsFromJson("MetaData.json")
+  tablePrefix <- moduleInfo$TablePrefix
+  schema <- jobContext$moduleExecutionSettings$resultsDatabaseSchema
+
+  resultsFolder <- jobContext$moduleExecutionSettings$resultsSubFolder
+  
+  conn <- DatabaseConnector::connect(connectionDetails)
+  on.exit(DatabaseConnector::disconnect(conn))
+  
+  databaseSchemaSettings <- PatientLevelPrediction::createDatabaseSchemaSettings(
+    resultSchema = schema, 
+    tablePrefix = tablePrefix, 
+    targetDialect = connectionDetails$dbms
+    )
+  
+  PatientLevelPrediction::insertCsvToDatabase(
+    csvFolder = resultsFolder,
+    conn = conn, 
+    databaseSchemaSettings = databaseSchemaSettings,
+    modelSaveLocation = file.path(resultsFolder, 'dbmodels'),
+    csvTableAppend = ''
+  )
+
+}
+
+createDataModelSchema <- function(jobContext) {
+  connectionDetails <- jobContext$moduleExecutionSettings$resultsConnectionDetails
+  moduleInfo <- ParallelLogger::loadSettingsFromJson("MetaData.json")
+  tablePrefix <- moduleInfo$TablePrefix
+  schema <- jobContext$moduleExecutionSettings$resultsDatabaseSchema
+  
+  PatientLevelPrediction::createPlpResultTables(
+    connectionDetails = connectionDetails, 
+    targetDialect = connectionDetails$dbms, 
+    resultSchema = schema, 
+    deleteTables = F,
+    createTables = T, 
+    tablePrefix = tablePrefix
+  )
+}
