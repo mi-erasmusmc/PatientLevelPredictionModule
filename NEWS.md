@@ -1,3 +1,8 @@
+PatientLevelPredictionModule 0.2.1
+=======================
+
+- Added xgboost to module
+
 PatientLevelPredictionModule 0.2.0
 =======================
 

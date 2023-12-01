@@ -1210,7 +1210,7 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "1.0.2",
+      "Version": "1.0.3",
       "Source": "Repository",
       "Repository": "CRAN"
     },
@@ -1447,6 +1447,11 @@
       "Version": "0.38",
       "Source": "Repository",
       "Repository": "CRAN"
+    },
+    "xgboost": {
+      "Package": "xgboost",
+      "Version": "1.7.5.1",
+      "Source": "Repository"
     },
     "xml2": {
       "Package": "xml2",
