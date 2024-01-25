@@ -1,4 +1,4 @@
-# Copyright 2023 Observational Health Data Sciences and Informatics
+# Copyright 2024 Observational Health Data Sciences and Informatics
 #
 # This file is part of CohortGeneratorModule
 #
@@ -13,6 +13,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# Adding library references that are required for Strategus
+library(CohortGenerator)
+library(DatabaseConnector)
+library(keyring)
+library(ParallelLogger)
+library(SqlRender)
+
+# Adding RSQLite so that we can test modules with Eunomia
+library(RSQLite)
 
 # Module methods -------------------------
 getModuleInfo <- function() {
@@ -36,8 +46,10 @@ createCohortDefinitionSetFromJobContext <- function(sharedResources, settings) {
   if (length(sharedResources) <= 0) {
     stop("No shared resources found")
   }
-  cohortDefinitionSharedResource <- getSharedResourceByClassName(sharedResources = sharedResources, 
-                                                                 class = "CohortDefinitionSharedResources")
+  cohortDefinitionSharedResource <- getSharedResourceByClassName(
+    sharedResources = sharedResources,
+    class = "CohortDefinitionSharedResources"
+  )
   if (is.null(cohortDefinitionSharedResource)) {
     stop("Cohort definition shared resource not found!")
   }
@@ -59,43 +71,39 @@ createCohortDefinitionSetFromJobContext <- function(sharedResources, settings) {
 }
 
 setCovariateSchemaTable <- function(
-    modelDesignList, 
+    modelDesignList,
     cohortDatabaseSchema,
-    cohortTable
-    ){
-  
-  if(inherits(modelDesignList, 'modelDesign')){
+    cohortTable) {
+  if (inherits(modelDesignList, "modelDesign")) {
     modelDesignList <- list(modelDesignList)
   }
-  
-  for(i in 1:length(modelDesignList)){
+
+  for (i in 1:length(modelDesignList)) {
     covariateSettings <- modelDesignList[[i]]$covariateSettings
-    
-    if(inherits(covariateSettings, 'covariateSettings')){
+
+    if (inherits(covariateSettings, "covariateSettings")) {
       covariateSettings <- list(covariateSettings)
     }
-    
-    for(j in 1:length(covariateSettings)){
-      
-      if('cohortDatabaseSchema' %in% names(covariateSettings[[j]])){
+
+    for (j in 1:length(covariateSettings)) {
+      if ("cohortDatabaseSchema" %in% names(covariateSettings[[j]])) {
         covariateSettings[[j]]$cohortDatabaseSchema <- cohortDatabaseSchema
       }
-      if('cohortTable' %in% names(covariateSettings[[j]])){
+      if ("cohortTable" %in% names(covariateSettings[[j]])) {
         covariateSettings[[j]]$cohortTable <- cohortTable
       }
-      
     }
-    
+
     modelDesignList[[i]]$covariateSettings <- covariateSettings
   }
-  
+
   return(modelDesignList)
 }
 
 # Module methods -------------------------
 execute <- function(jobContext) {
   rlang::inform("Validating inputs")
-  inherits(jobContext, 'list')
+  inherits(jobContext, "list")
 
   if (is.null(jobContext$settings)) {
     stop("Analysis settings not found in job context")
@@ -106,68 +114,66 @@ execute <- function(jobContext) {
   if (is.null(jobContext$moduleExecutionSettings)) {
     stop("Execution settings not found in job context")
   }
-  
+
   workFolder <- jobContext$moduleExecutionSettings$workSubFolder
   resultsFolder <- jobContext$moduleExecutionSettings$resultsSubFolder
-  
+
   rlang::inform("Executing PLP")
   moduleInfo <- getModuleInfo()
-  
+
   # Creating database details
   databaseDetails <- PatientLevelPrediction::createDatabaseDetails(
-    connectionDetails = jobContext$moduleExecutionSettings$connectionDetails, 
+    connectionDetails = jobContext$moduleExecutionSettings$connectionDetails,
     cdmDatabaseSchema = jobContext$moduleExecutionSettings$cdmDatabaseSchema,
     cohortDatabaseSchema = jobContext$moduleExecutionSettings$workDatabaseSchema,
     cdmDatabaseName = jobContext$moduleExecutionSettings$connectionDetailsReference,
     cdmDatabaseId = jobContext$moduleExecutionSettings$databaseId,
-    #tempEmulationSchema =  , is there s temp schema specified anywhere?
-    cohortTable = jobContext$moduleExecutionSettings$cohortTableNames$cohortTable, 
-    outcomeDatabaseSchema = jobContext$moduleExecutionSettings$workDatabaseSchema, 
+    # tempEmulationSchema =  , is there s temp schema specified anywhere?
+    cohortTable = jobContext$moduleExecutionSettings$cohortTableNames$cohortTable,
+    outcomeDatabaseSchema = jobContext$moduleExecutionSettings$workDatabaseSchema,
     outcomeTable = jobContext$moduleExecutionSettings$cohortTableNames$cohortTable
   )
-  
+
   # find where cohortDefinitions are as sharedResources is a list
   cohortDefinitionSet <- createCohortDefinitionSetFromJobContext(
     sharedResources = jobContext$sharedResources,
     settings = jobContext$settings
-    )
-  
-  # set the covariate settings schema and tables 
+  )
+
+  # set the covariate settings schema and tables
   jobContext$settings <- setCovariateSchemaTable(
-    modelDesignList = jobContext$settings, 
+    modelDesignList = jobContext$settings,
     cohortDatabaseSchema = jobContext$moduleExecutionSettings$workDatabaseSchema,
     cohortTable = jobContext$moduleExecutionSettings$cohortTableNames$cohortTable
-    )
-  
+  )
+
   # run the models
   PatientLevelPrediction::runMultiplePlp(
-    databaseDetails = databaseDetails, 
-    modelDesignList = jobContext$settings, 
+    databaseDetails = databaseDetails,
+    modelDesignList = jobContext$settings,
     cohortDefinitions = cohortDefinitionSet,
     saveDirectory = workFolder
-      )
-  
+  )
+
   # Export the results
   rlang::inform("Export data to csv files")
 
   sqliteConnectionDetails <- DatabaseConnector::createConnectionDetails(
-    dbms = 'sqlite',
-    server = file.path(workFolder, "sqlite","databaseFile.sqlite")
+    dbms = "sqlite",
+    server = file.path(workFolder, "sqlite", "databaseFile.sqlite")
   )
-    
+
   PatientLevelPrediction::extractDatabaseToCsv(
-    connectionDetails = sqliteConnectionDetails, 
+    connectionDetails = sqliteConnectionDetails,
     databaseSchemaSettings = PatientLevelPrediction::createDatabaseSchemaSettings(
-      resultSchema = 'main', # sqlite settings
-      tablePrefix = '', # sqlite settings
-      targetDialect = 'sqlite', 
+      resultSchema = "main", # sqlite settings
+      tablePrefix = "", # sqlite settings
+      targetDialect = "sqlite",
       tempEmulationSchema = NULL
-    ), 
+    ),
     csvFolder = file.path(resultsFolder),
     fileAppend = NULL
   )
-  
-  
 }
 
 
@@ -178,24 +184,23 @@ uploadResultsCallback <- function(jobContext) {
   schema <- jobContext$moduleExecutionSettings$resultsDatabaseSchema
 
   resultsFolder <- jobContext$moduleExecutionSettings$resultsSubFolder
-  
+
   conn <- DatabaseConnector::connect(connectionDetails)
   on.exit(DatabaseConnector::disconnect(conn))
-  
+
   databaseSchemaSettings <- PatientLevelPrediction::createDatabaseSchemaSettings(
-    resultSchema = schema, 
-    tablePrefix = tablePrefix, 
+    resultSchema = schema,
+    tablePrefix = tablePrefix,
     targetDialect = connectionDetails$dbms
-    )
-  
-  PatientLevelPrediction::insertCsvToDatabase(
-    csvFolder = resultsFolder,
-    conn = conn, 
-    databaseSchemaSettings = databaseSchemaSettings,
-    modelSaveLocation = file.path(resultsFolder, 'dbmodels'),
-    csvTableAppend = ''
   )
 
+  PatientLevelPrediction::insertCsvToDatabase(
+    csvFolder = resultsFolder,
+    conn = conn,
+    databaseSchemaSettings = databaseSchemaSettings,
+    modelSaveLocation = file.path(resultsFolder, "dbmodels"),
+    csvTableAppend = ""
+  )
 }
 
 createDataModelSchema <- function(jobContext) {
@@ -203,13 +208,13 @@ createDataModelSchema <- function(jobContext) {
   moduleInfo <- ParallelLogger::loadSettingsFromJson("MetaData.json")
   tablePrefix <- moduleInfo$TablePrefix
   schema <- jobContext$moduleExecutionSettings$resultsDatabaseSchema
-  
+
   PatientLevelPrediction::createPlpResultTables(
-    connectionDetails = connectionDetails, 
-    targetDialect = connectionDetails$dbms, 
-    resultSchema = schema, 
+    connectionDetails = connectionDetails,
+    targetDialect = connectionDetails$dbms,
+    resultSchema = schema,
     deleteTables = F,
-    createTables = T, 
+    createTables = T,
     tablePrefix = tablePrefix
   )
 }

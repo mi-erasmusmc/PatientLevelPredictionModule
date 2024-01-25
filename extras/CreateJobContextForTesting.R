@@ -17,12 +17,14 @@ getSampleCohortDefintionSet <- function() {
     cohortJsonFileName <- cohortJsonFiles[i]
     cohortName <- tools::file_path_sans_ext(basename(cohortJsonFileName))
     cohortJson <- readChar(cohortJsonFileName, file.info(cohortJsonFileName)$size)
-    sampleCohorts <- rbind(sampleCohorts, data.frame(cohortId = i,
-                                                     cohortName = cohortName,
-                                                     cohortDefinition = cohortJson,
-                                                     stringsAsFactors = FALSE))
+    sampleCohorts <- rbind(sampleCohorts, data.frame(
+      cohortId = i,
+      cohortName = cohortName,
+      cohortDefinition = cohortJson,
+      stringsAsFactors = FALSE
+    ))
   }
-  sampleCohorts <- apply(sampleCohorts,1,as.list)
+  sampleCohorts <- apply(sampleCohorts, 1, as.list)
   return(sampleCohorts)
 }
 
@@ -34,15 +36,15 @@ createCohortSharedResource <- function(cohortDefinitionSet) {
 
 # Module Settings Spec ----------------------------
 makeModelDesignSettings <- function(targetId, outcomeId, popSettings, covarSettings) {
-  invisible(  PatientLevelPrediction::createModelDesign(
-    targetId = targetId, 
-    outcomeId = outcomeId, 
-    restrictPlpDataSettings = PatientLevelPrediction::createRestrictPlpDataSettings(), 
-    populationSettings = popSettings, 
-    covariateSettings = covarSettings, 
-    preprocessSettings = PatientLevelPrediction::createPreprocessSettings(), 
-    modelSettings = PatientLevelPrediction::setLassoLogisticRegression(), 
-    splitSettings = PatientLevelPrediction::createDefaultSplitSetting(), 
+  invisible(PatientLevelPrediction::createModelDesign(
+    targetId = targetId,
+    outcomeId = outcomeId,
+    restrictPlpDataSettings = PatientLevelPrediction::createRestrictPlpDataSettings(),
+    populationSettings = popSettings,
+    covariateSettings = covarSettings,
+    preprocessSettings = PatientLevelPrediction::createPreprocessSettings(),
+    modelSettings = PatientLevelPrediction::setLassoLogisticRegression(),
+    splitSettings = PatientLevelPrediction::createDefaultSplitSetting(),
     runCovariateSummary = T
   ))
 }
@@ -57,7 +59,7 @@ plpPopulationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
 plpCovarSettings <- FeatureExtraction::createDefaultCovariateSettings()
 
 modelDesignList <- list()
-exposureOfInterestIds <- c(1,2)
+exposureOfInterestIds <- c(1, 2)
 outcomeOfInterestIds <- c(3)
 for (i in 1:length(exposureOfInterestIds)) {
   for (j in 1:length(outcomeOfInterestIds)) {
@@ -82,7 +84,7 @@ analysisSpecifications <- createEmptyAnalysisSpecificiations() %>%
   addSharedResources(createCohortSharedResource(getSampleCohortDefintionSet())) %>%
   addModuleSpecifications(plpModuleSpecifications)
 
-executionSettings <-   Strategus::createCdmExecutionSettings(
+executionSettings <- Strategus::createCdmExecutionSettings(
   connectionDetailsReference = "dummy",
   workDatabaseSchema = "main",
   cdmDatabaseSchema = "main",
