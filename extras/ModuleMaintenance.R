@@ -65,9 +65,27 @@ updatedPackages <- list(
     Source = "Repository",
     Repository = "CRAN"
   ),
+  list(
+    Package = "SqlRender",
+    Version = "1.16.1",
+    Source = "Repository",
+    Repository = "CRAN"
+  ),
+  list(
+    Package = "xgboost",
+    Version = "1.7.5.1",
+    Source = "Repository",
+    Repository = "CRAN"
+  ),
+  list(
+    Package = "pool",
+    Version = "1.0.2",
+    Source = "Repository",
+    Repository = "CRAN"
+  ),
   "OHDSI/PatientLevelPrediction@v6.3.6",
   "OHDSI/CohortGenerator@v0.8.1",
-  "OHDSI/ResultModelManager@v0.5.6"
+  "OHDSI/FeatureExtraction@v3.3.1"
 )
 updatedDevPackages <- list(
   list(
