@@ -208,7 +208,10 @@ createDataModelSchema <- function(jobContext) {
   moduleInfo <- ParallelLogger::loadSettingsFromJson("MetaData.json")
   tablePrefix <- moduleInfo$TablePrefix
   schema <- jobContext$moduleExecutionSettings$resultsDatabaseSchema
-
+  
+  # Workaround for issue https://github.com/tidyverse/vroom/issues/519:
+  readr::local_edition(1)
+  
   PatientLevelPrediction::createPlpResultTables(
     connectionDetails = connectionDetails,
     targetDialect = connectionDetails$dbms,
