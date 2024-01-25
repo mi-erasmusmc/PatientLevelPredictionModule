@@ -94,7 +94,8 @@ updatedDevPackages <- list(
     Source = "Repository",
     Repository = "CRAN"
   ),
-  "OHDSI/Eunomia@v1.0.2"
+  "OHDSI/Eunomia@v1.0.2",
+  "OHDSI/ResultModelManager@v0.5.6"
 )
 
 # Deactivates and cleans the project to remove any/all old references
