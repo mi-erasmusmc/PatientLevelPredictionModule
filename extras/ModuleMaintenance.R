@@ -79,7 +79,7 @@ updatedPackages <- list(
   ),
   list(
     Package = "pool",
-    Version = "1.0.2",
+    Version = "1.0.1",
     Source = "Repository",
     Repository = "CRAN"
   ),
