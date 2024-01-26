@@ -1,3 +1,7 @@
+PatientLevelPredictionModule 0.3.0
+=======================
+- Using renv project profiles to manage core packages required for module execution vs. those that are needed for development purposes.
+
 PatientLevelPredictionModule 0.2.1
 =======================
 
