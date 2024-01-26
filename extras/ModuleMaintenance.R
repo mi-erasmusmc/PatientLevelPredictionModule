@@ -85,7 +85,8 @@ updatedPackages <- list(
   ),
   "OHDSI/PatientLevelPrediction@v6.3.6",
   "OHDSI/CohortGenerator@v0.8.1",
-  "OHDSI/FeatureExtraction@v3.3.1"
+  "OHDSI/FeatureExtraction@v3.3.1",
+  "OHDSI/ResultModelManager@v0.5.6"
 )
 updatedDevPackages <- list(
   list(
@@ -94,8 +95,7 @@ updatedDevPackages <- list(
     Source = "Repository",
     Repository = "CRAN"
   ),
-  "OHDSI/Eunomia@v1.0.2",
-  "OHDSI/ResultModelManager@v0.5.6"
+  "OHDSI/Eunomia@v1.0.2"
 )
 
 # Deactivates and cleans the project to remove any/all old references
